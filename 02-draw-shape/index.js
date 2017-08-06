@@ -54,9 +54,9 @@ function main() {
     gl.shaderSource(vertexShader, `
       attribute vec3 aVertexPosition;
       uniform mat4 uniformModelViewMatrix;
-      uniform mat4 uniformPerspectiveMatrix;
+      uniform mat4 uniformProjectionMatrix;
       void main(void) {
-        gl_Position = uniformPerspectiveMatrix * uniformModelViewMatrix * vec4(aVertexPosition, 1.0);
+        gl_Position = uniformProjectionMatrix * uniformModelViewMatrix * vec4(aVertexPosition, 1.0);
       }
     `);
     _compileShader(gl, vertexShader);
@@ -102,12 +102,12 @@ function main() {
     // Clear our canvas to our configured presets (black canvas)
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    // Estalish our perspective
+    // Estalish our projection matrix
+    // DEV: This is "projection" in "model-view-projection"
     // DEV: We have switched from mdn to a mdn/gpjt hybrid here
-    // DEV: Technically this is a "view to projection" matrix
-    var perspectiveMatrix = mat4.create();
+    var projectionMatrix = mat4.create();
     var vertFieldOfViewDegrees = 45;
-    mat4.perspective(perspectiveMatrix /* output matrix */,
+    mat4.perspective(projectionMatrix /* output matrix */,
       (vertFieldOfViewDegrees * 2 * Math.PI) / 180 /* degrees -> radians */,
       canvasWidth / canvasHeight /* aspect */,
       0.1 /* near bound */, 100.0 /* far bound */);
@@ -130,9 +130,9 @@ function main() {
 
     // Resolve and update our id/index/location for our matrix variables
     // TODO: Look up "uniform location" in GL terminology
-    var uniformPerspectiveLocation = gl.getUniformLocation(shaderProgram, 'uniformPerspectiveMatrix');
-    assert(uniformPerspectiveLocation);
-    gl.uniformMatrix4fv(uniformPerspectiveLocation, false /* transpose */, perspectiveMatrix /* value */);
+    var uniformProjectionLocation = gl.getUniformLocation(shaderProgram, 'uniformProjectionMatrix');
+    assert(uniformProjectionLocation);
+    gl.uniformMatrix4fv(uniformProjectionLocation, false /* transpose */, projectionMatrix /* value */);
     var uniformModelViewLocation = gl.getUniformLocation(shaderProgram, 'uniformModelViewMatrix');
     assert(uniformModelViewLocation);
     gl.uniformMatrix4fv(uniformModelViewLocation,  false /* transpose */, modelViewMatrix /* value */);
