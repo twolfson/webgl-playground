@@ -9,6 +9,7 @@
   "author": "Todd Wolfson <todd@twolfson.com> (http://twolfson.com/)",
   "license": "Unlicense",
   "dependencies": {
+    "gl-matrix": "~2.4.0",
     "serve": "~1.4.0"
   }
 }

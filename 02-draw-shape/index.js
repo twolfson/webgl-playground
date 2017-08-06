@@ -1,3 +1,5 @@
+// Depends on `gl-matrix`
+
 // Define helper functions
 function assert(val, msg) {
   if (!val) { throw new Error(msg); }
@@ -8,10 +10,6 @@ function main() {
   // Resolve our canvas
   var canvasEl = document.getElementById('canvas');
   assert(canvasEl, 'Unable to find element #canvas');
-  var width = canvasEl.width; assert(width);
-  assert(typeof width === 'number');
-  var height = canvasEl.height; assert(height);
-  assert(typeof height === 'number');
 
   // Resolve our WebGL context
   var gl = canvas.getContext('webgl');
