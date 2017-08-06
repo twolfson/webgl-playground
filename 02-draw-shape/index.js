@@ -33,7 +33,7 @@ function main() {
     assert(gl.getShaderParameter(shader, gl.COMPILE_STATUS),
       'Unable to compile shader: ' + gl.getShaderInfoLog(shader));
   }
-  (function initShaders() {
+  (function initShaders () {
     // Compile our shaders
     var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(fragmentShader, `
@@ -66,6 +66,26 @@ function main() {
     gl.useProgram(shaderProgram);
     var vertexPositionAttribute = gl.getAttribLocation(shaderProgram, 'aVertexPosition');
     gl.enableVertexAttribArray(vertexPositionAttribute);
+  }());
+
+  (function initBuffers () {
+    // Create a buffer for our square's vertices
+    var squareVerticesBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
+
+    // Create our square's vertices
+    // squareVertices = [x1, y1, z1, x2, y2, ...];
+    var squareVerticesArr = new Float32Array([
+       1.0,  1.0, 0.0,
+      -1.0,  1.0, 0.0,
+       1.0, -1.0, 0.0,
+      -1.0, -1.0, 0.0
+    ]);
+
+    // Bind our buffer data
+    // TODO: How does WebGL know we are referring to `squareVerticesBuffer`?
+    //   Can we only hve 1 ARRAY_BUFFER at a time?
+    gl.bufferData(gl.ARRAY_BUFFER, squareVerticesArr, gl.STATIC_DRAW);
   }());
 }
 
