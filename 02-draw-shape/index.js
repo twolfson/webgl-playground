@@ -26,7 +26,7 @@ function main() {
     gl.depthFunc(gl.LEQUAL);
   }());
 
-  var shaderProgram;
+  var shaderProgram, vertexPositionAttribute;
   function compileShader(gl, shader) {
     gl.compileShader(shader);
     assert(gl.getShaderParameter(shader, gl.COMPILE_STATUS),
@@ -63,7 +63,7 @@ function main() {
 
     // Complete binding to our shader program
     gl.useProgram(shaderProgram);
-    var vertexPositionAttribute = gl.getAttribLocation(shaderProgram, 'aVertexPosition');
+    vertexPositionAttribute = gl.getAttribLocation(shaderProgram, 'aVertexPosition');
     gl.enableVertexAttribArray(vertexPositionAttribute);
   }());
 
@@ -94,10 +94,10 @@ function main() {
   var modelViewMatrix = mat4.create();
   function setMatrixUniforms() {
     var uniformPerspectiveLocation = gl.getUniformLocation(shaderProgram, 'uniformPerspectiveMatrix');
-    gl.uniformMatrix4fv(perspectiveUniformLocation, false, new Float32Array(perspectiveMatrix.flatten()));
+    gl.uniformMatrix4fv(uniformPerspectiveLocation, false, perspectiveMatrix);
 
     var uniformModelViewLocation = gl.getUniformLocation(shaderProgram, 'uniformModelViewMatrix');
-    gl.uniformMatrix4fv(uniformModelViewLocation, false, new Float32Array(modelViewMatrix.flatten()));
+    gl.uniformMatrix4fv(uniformModelViewLocation, false, modelViewMatrix);
   }
   (function drawScene () {
     // Clear our canvas to our configured presets (black canvas)
@@ -105,20 +105,20 @@ function main() {
 
     // Estalish our perspective
     // DEV: We have switched from mdn to a mdn/gpjt hybrid here
-    mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, perspectiveMatrix);
+    mat4.perspective(perspectiveMatrix, 45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0);
 
     // Update our model view matrix
     // TODO: Verify that `mvMatrix` is "model view matrix"
     mat4.identity(modelViewMatrix);
     // DEV: Translate model-view
     // TODO: Verify this note is accurate
-    mat4.translate(modelViewMatrix, [-0.0, 0.0, -6.0]);
+    mat4.translate(modelViewMatrix, modelViewMatrix, [-0.0, 0.0, -6.0]);
 
     // Draw our square
     gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
-    gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, 0, 0);
+    gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
     setMatrixUniforms();
-    gl.drawArrays(gl.TRIANGEL_STRIP, 0, 4);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }());
 }
 
