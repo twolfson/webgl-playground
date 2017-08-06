@@ -106,13 +106,12 @@ function main() {
       canvasWidth / canvasHeight /* aspect */,
       0.1 /* near bound */, 100.0 /* far bound */);
 
-    // Update our model view matrix
-    // TODO: Verify that `mvMatrix` is "model view matrix"
+    // Move our content back so we can see it from the camera
     var modelViewMatrix = mat4.create();
     mat4.identity(modelViewMatrix);
-    // DEV: Translate model-view
-    // TODO: Verify this note is accurate
-    mat4.translate(modelViewMatrix, modelViewMatrix, [-0.0, 0.0, -6.0]);
+    // Translate by [x, y, z]
+    // DEV: Under the hood, this will update the `w` (origin) column in our matrix
+    mat4.translate(modelViewMatrix, modelViewMatrix, [0.0, 0.0, -6.0]);
 
     // Draw our square
     gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
