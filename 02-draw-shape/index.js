@@ -41,9 +41,11 @@ function main() {
     var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
     // TODO: Document GLSL language
     // TODO: Get deeper explanation of how WebGL relies on vertex/fragment shaders/programs
+    //   Current thought is it takes JS bound vars and sets up variables to render with in WebGL engine
+    //   Instead of it being done in JS
     gl.shaderSource(fragmentShader, `
       void main(void) {
-        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
       }
     `);
     _compileShader(gl, fragmentShader);
