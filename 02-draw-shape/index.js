@@ -53,6 +53,19 @@ function main() {
       }
     `);
     compileShader(gl, vertexShader);
+
+    // Create a shader program with our shaders
+    shaderProgram = gl.createProgram();
+    gl.attachShader(shaderProgram, vertexShader);
+    gl.attachShader(shaderProgram, fragmentShader);
+    gl.linkProgram(shaderProgram);
+    assert(gl.getProgramParameter(shaderProgram, gl.LINK_STATUS),
+      'Unable to link program: ' + gl.getProgramInfoLog(shaderProgram));
+
+    // Complete binding to our shader program
+    gl.useProgram(shaderProgram);
+    var vertexPositionAttribute = gl.getAttribLocation(shaderProgram, 'aVertexPosition');
+    gl.enableVertexAttribArray(vertexPositionAttribute);
   }());
 }
 
