@@ -45,10 +45,10 @@ function main() {
     var vertexShader = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(vertexShader, `
       attribute vec3 aVertexPosition;
-      uniform mat4 uMVMatrix;
-      uniform mat4 uPMatrix;
+      uniform mat4 uniformModelViewMatrix;
+      uniform mat4 uniformPerspectiveMatrix;
       void main(void) {
-        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+        gl_Position = uniformPerspectiveMatrix * uniformModelViewMatrix * vec4(aVertexPosition, 1.0);
       }
     `);
     compileShader(gl, vertexShader);
@@ -67,9 +67,10 @@ function main() {
     gl.enableVertexAttribArray(vertexPositionAttribute);
   }());
 
+  var squareVerticesBuffer;
   (function initBuffers () {
     // Create a buffer for our square's vertices
-    var squareVerticesBuffer = gl.createBuffer();
+    squareVerticesBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
 
     // Create our square's vertices
@@ -85,17 +86,40 @@ function main() {
     // TODO: How does WebGL know we are referring to `squareVerticesBuffer`?
     //   Can we only hve 1 ARRAY_BUFFER at a time?
     gl.bufferData(gl.ARRAY_BUFFER, squareVerticesArr, gl.STATIC_DRAW);
+    // TODO: Do we need to set `itemSize` and `numItems` as in `gpjt` version?
   }());
 
-  function drawScene() {
+
+  var perspectiveMatrix = mat4.create();
+  var modelViewMatrix = mat4.create();
+  function setMatrixUniforms() {
+    var uniformPerspectiveLocation = gl.getUniformLocation(shaderProgram, 'uniformPerspectiveMatrix');
+    gl.uniformMatrix4fv(perspectiveUniformLocation, false, new Float32Array(perspectiveMatrix.flatten()));
+
+    var uniformModelViewLocation = gl.getUniformLocation(shaderProgram, 'uniformModelViewMatrix');
+    gl.uniformMatrix4fv(uniformModelViewLocation, false, new Float32Array(modelViewMatrix.flatten()));
+  }
+  (function drawScene () {
     // Clear our canvas to our configured presets (black canvas)
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // Estalish our perspective
-    var perspectiveMatrix = makePerspective
-  }
-  // TODO: Use `requestAnimationFrame` instead of `setInterval`
-  setInterval(drawScene, 15);
+    // DEV: We have switched from mdn to a mdn/gpjt hybrid here
+    mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, perspectiveMatrix);
+
+    // Update our model view matrix
+    // TODO: Verify that `mvMatrix` is "model view matrix"
+    mat4.identity(modelViewMatrix);
+    // DEV: Translate model-view
+    // TODO: Verify this note is accurate
+    mat4.translate(modelViewMatrix, [-0.0, 0.0, -6.0]);
+
+    // Draw our square
+    gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
+    gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, 0, 0);
+    setMatrixUniforms();
+    gl.drawArrays(gl.TRIANGEL_STRIP, 0, 4);
+  }());
 }
 
 // Invoke our main function
