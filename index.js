@@ -10,9 +10,15 @@ function main() {
   var canvasEl = document.getElementById('canvas');
   assert(canvasEl, 'Unable to find element #canvas');
 
+  // Resolve our WebGL context
+  var glCtx = canvas.getContext('webgl');
+  assert(glCtx, 'Unable to load webgl context');
+
   // Draw on our canvas
-  var ctx2d = canvas.getContext('2d');
-  ctx2d.fillRect(0, 0, 100, 100);
+  glCtx.clearColor(0.0, 0.0, 0.0, 1.0);
+  glCtx.clearDepth(1.0);
+  glCtx.enable(glCtx.DEPTH_TEST);
+  glCtx.depthFunc(glCtx.LEQUAL);
 }
 
 // Invoke our main function
