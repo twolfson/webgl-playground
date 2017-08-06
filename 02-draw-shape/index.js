@@ -99,6 +99,7 @@ function main() {
 
     // Estalish our perspective
     // DEV: We have switched from mdn to a mdn/gpjt hybrid here
+    // DEV: Technically this is a "view to projection" matrix
     var perspectiveMatrix = mat4.create();
     var vertFieldOfViewDegrees = 45;
     mat4.perspective(perspectiveMatrix /* output matrix */,
@@ -107,6 +108,8 @@ function main() {
       0.1 /* near bound */, 100.0 /* far bound */);
 
     // Move our content back so we can see it from the camera
+    // DEV: Technically, a model-view matrix is a collapsed "model to world" and "world to view" matrix
+    //   https://www.youtube.com/watch?v=-tonZsbHty8
     var modelViewMatrix = mat4.create();
     mat4.identity(modelViewMatrix);
     // Translate by [x, y, z]
