@@ -6,7 +6,7 @@ This is a repository to better understand the WebGL fundamental components and f
 Examples are based off of:
 
 - <https://github.com/mdn/webgl-examples>
-- <http://learningwebgl.com/blog/?page_id=1217>
+- <https://github.com/gpjt/webgl-lessons>
 
 ## Getting started
 To get our repo running locally, run the following:

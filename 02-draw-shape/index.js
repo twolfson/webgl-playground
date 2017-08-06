@@ -8,6 +8,10 @@ function main() {
   // Resolve our canvas
   var canvasEl = document.getElementById('canvas');
   assert(canvasEl, 'Unable to find element #canvas');
+  var width = canvasEl.width; assert(width);
+  assert(typeof width === 'number');
+  var height = canvasEl.height; assert(height);
+  assert(typeof height === 'number');
 
   // Resolve our WebGL context
   var gl = canvas.getContext('webgl');
@@ -22,9 +26,6 @@ function main() {
     // Enable and configure depth-based obfuscation capability
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
-
-    // Trigger a clear for colors and depth on our canvas
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   }());
 
   var shaderProgram;
@@ -87,6 +88,16 @@ function main() {
     //   Can we only hve 1 ARRAY_BUFFER at a time?
     gl.bufferData(gl.ARRAY_BUFFER, squareVerticesArr, gl.STATIC_DRAW);
   }());
+
+  function drawScene() {
+    // Clear our canvas to our configured presets (black canvas)
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    // Estalish our perspective
+    var perspectiveMatrix = makePerspective
+  }
+  // TODO: Use `requestAnimationFrame` instead of `setInterval`
+  setInterval(drawScene, 15);
 }
 
 // Invoke our main function
