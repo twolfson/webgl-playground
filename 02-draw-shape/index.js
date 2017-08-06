@@ -71,7 +71,12 @@ function main() {
 
     // Complete binding to our shader program
     gl.useProgram(shaderProgram);
+
+    // Retrieve the index/id/location of our `aVertexPosition` variable in our shader
     vertexPositionAttributeLocation = gl.getAttribLocation(shaderProgram, 'aVertexPosition');
+    assert(vertexPositionAttributeLocation !== -1);
+    // Flag our index/id/location of `aVertexPosition` as a vertex attribute array
+    // TODO: Look up "vertex attrib array" in GL terminology
     gl.enableVertexAttribArray(vertexPositionAttributeLocation);
   }());
 
@@ -116,14 +121,24 @@ function main() {
     // DEV: Under the hood, this will update the `w` (origin) column in our matrix
     mat4.translate(modelViewMatrix, modelViewMatrix, [0.0, 0.0, -6.0]);
 
-    // Draw our square
+    // Bind square vertices to the ARRAY_BUFFER register
     gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
-    gl.vertexAttribPointer(vertexPositionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
+
+    // Update the size info for our `aVertexPosition` variable
+    gl.vertexAttribPointer(vertexPositionAttributeLocation, 3 /* vertex size */, gl.FLOAT /* type */,
+      false /* normalized */, 0 /* stride */, 0 /* offset */);
+
+    // Resolve and update our id/index/location for our matrix variables
+    // TODO: Look up "uniform location" in GL terminology
     var uniformPerspectiveLocation = gl.getUniformLocation(shaderProgram, 'uniformPerspectiveMatrix');
-    gl.uniformMatrix4fv(uniformPerspectiveLocation, false, perspectiveMatrix);
+    assert(uniformPerspectiveLocation);
+    gl.uniformMatrix4fv(uniformPerspectiveLocation, false /* transpose */, perspectiveMatrix /* value */);
     var uniformModelViewLocation = gl.getUniformLocation(shaderProgram, 'uniformModelViewMatrix');
-    gl.uniformMatrix4fv(uniformModelViewLocation, false, modelViewMatrix);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    assert(uniformModelViewLocation);
+    gl.uniformMatrix4fv(uniformModelViewLocation,  false /* transpose */, modelViewMatrix /* value */);
+
+    // Perform our draw with the linked shaders and given variables
+    gl.drawArrays(gl.TRIANGLE_STRIP /* mode */, 0 /* first (vertex) */, 4 /* count (vertices) */);
   }());
 }
 

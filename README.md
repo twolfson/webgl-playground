@@ -8,6 +8,11 @@ Examples are based off of:
 - <https://github.com/mdn/webgl-examples>
 - <https://github.com/gpjt/webgl-lessons>
 
+More resources:
+
+- <https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext>
+    - Great for filling in even more details beyond code examples
+
 ## Getting started
 To get our repo running locally, run the following:
 
