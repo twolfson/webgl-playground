@@ -1,4 +1,3 @@
-// Based on https://github.com/mdn/webgl-examples
 // Define helper functions
 function assert(val, msg) {
   if (!val) { throw new Error(msg); }
