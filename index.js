@@ -11,14 +11,20 @@ function main() {
   assert(canvasEl, 'Unable to find element #canvas');
 
   // Resolve our WebGL context
-  var glCtx = canvas.getContext('webgl');
-  assert(glCtx, 'Unable to load webgl context');
+  var gl = canvas.getContext('webgl');
+  assert(gl, 'Unable to load webgl context');
 
-  // Draw on our canvas
-  glCtx.clearColor(0.0, 0.0, 0.0, 1.0);
-  glCtx.clearDepth(1.0);
-  glCtx.enable(glCtx.DEPTH_TEST);
-  glCtx.depthFunc(glCtx.LEQUAL);
+  // Set clear color and depth values (rgba, ranging from 0.0 to 1.0 includes)
+  // DEV: This doesn't perform clear, only the "default" values
+  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+  gl.clearDepth(1.0);
+
+  // Enable and configure depth-based obfuscation capability
+  gl.enable(gl.DEPTH_TEST);
+  gl.depthFunc(gl.LEQUAL);
+
+  // Trigger a clear for colors and depth on our canvas
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 }
 
 // Invoke our main function
