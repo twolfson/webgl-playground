@@ -26,8 +26,8 @@ function main() {
     gl.depthFunc(gl.LEQUAL);
   }());
 
-  var shaderProgram, vertexPositionAttribute;
-  function compileShader(gl, shader) {
+  var shaderProgram, vertexPositionAttributeLocation;
+  function _compileShader(gl, shader) {
     gl.compileShader(shader);
     assert(gl.getShaderParameter(shader, gl.COMPILE_STATUS),
       'Unable to compile shader: ' + gl.getShaderInfoLog(shader));
@@ -35,12 +35,14 @@ function main() {
   (function initShaders () {
     // Compile our shaders
     var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+    // TODO: Document GLSL language
+    // TODO: Get deeper explanation of how WebGL relies on vertex/fragment shaders/programs
     gl.shaderSource(fragmentShader, `
       void main(void) {
         gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
       }
     `);
-    compileShader(gl, fragmentShader);
+    _compileShader(gl, fragmentShader);
 
     var vertexShader = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(vertexShader, `
@@ -51,7 +53,7 @@ function main() {
         gl_Position = uniformPerspectiveMatrix * uniformModelViewMatrix * vec4(aVertexPosition, 1.0);
       }
     `);
-    compileShader(gl, vertexShader);
+    _compileShader(gl, vertexShader);
 
     // Create a shader program with our shaders
     shaderProgram = gl.createProgram();
@@ -63,16 +65,12 @@ function main() {
 
     // Complete binding to our shader program
     gl.useProgram(shaderProgram);
-    vertexPositionAttribute = gl.getAttribLocation(shaderProgram, 'aVertexPosition');
-    gl.enableVertexAttribArray(vertexPositionAttribute);
+    vertexPositionAttributeLocation = gl.getAttribLocation(shaderProgram, 'aVertexPosition');
+    gl.enableVertexAttribArray(vertexPositionAttributeLocation);
   }());
 
   var squareVerticesBuffer;
   (function initBuffers () {
-    // Create a buffer for our square's vertices
-    squareVerticesBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
-
     // Create our square's vertices
     // squareVertices = [x1, y1, z1, x2, y2, ...];
     var squareVerticesArr = new Float32Array([
@@ -82,33 +80,25 @@ function main() {
       -1.0, -1.0, 0.0
     ]);
 
-    // Bind our buffer data
-    // TODO: How does WebGL know we are referring to `squareVerticesBuffer`?
-    //   Can we only hve 1 ARRAY_BUFFER at a time?
+    // Create, bind, and update a buffer for our square's vertices
+    // DEV: We bind/update via the ARRAY_BUFFER register
+    squareVerticesBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, squareVerticesArr, gl.STATIC_DRAW);
-    // TODO: Do we need to set `itemSize` and `numItems` as in `gpjt` version?
   }());
 
-
-  var perspectiveMatrix = mat4.create();
-  var modelViewMatrix = mat4.create();
-  function setMatrixUniforms() {
-    var uniformPerspectiveLocation = gl.getUniformLocation(shaderProgram, 'uniformPerspectiveMatrix');
-    gl.uniformMatrix4fv(uniformPerspectiveLocation, false, perspectiveMatrix);
-
-    var uniformModelViewLocation = gl.getUniformLocation(shaderProgram, 'uniformModelViewMatrix');
-    gl.uniformMatrix4fv(uniformModelViewLocation, false, modelViewMatrix);
-  }
   (function drawScene () {
     // Clear our canvas to our configured presets (black canvas)
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // Estalish our perspective
     // DEV: We have switched from mdn to a mdn/gpjt hybrid here
+    var perspectiveMatrix = mat4.create();
     mat4.perspective(perspectiveMatrix, 45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0);
 
     // Update our model view matrix
     // TODO: Verify that `mvMatrix` is "model view matrix"
+    var modelViewMatrix = mat4.create();
     mat4.identity(modelViewMatrix);
     // DEV: Translate model-view
     // TODO: Verify this note is accurate
@@ -116,8 +106,11 @@ function main() {
 
     // Draw our square
     gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
-    gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
-    setMatrixUniforms();
+    gl.vertexAttribPointer(vertexPositionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
+    var uniformPerspectiveLocation = gl.getUniformLocation(shaderProgram, 'uniformPerspectiveMatrix');
+    gl.uniformMatrix4fv(uniformPerspectiveLocation, false, perspectiveMatrix);
+    var uniformModelViewLocation = gl.getUniformLocation(shaderProgram, 'uniformModelViewMatrix');
+    gl.uniformMatrix4fv(uniformModelViewLocation, false, modelViewMatrix);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }());
 }
