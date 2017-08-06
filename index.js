@@ -14,17 +14,47 @@ function main() {
   var gl = canvas.getContext('webgl');
   assert(gl, 'Unable to load webgl context');
 
-  // Set clear color and depth values (rgba, ranging from 0.0 to 1.0 includes)
-  // DEV: This doesn't perform clear, only the "default" values
-  gl.clearColor(0.0, 0.0, 0.0, 1.0);
-  gl.clearDepth(1.0);
+  (function configureWebgl () {
+    // Set clear color and depth values (rgba, ranging from 0.0 to 1.0 includes)
+    // DEV: This doesn't perform clear, only the "default" values
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clearDepth(1.0);
 
-  // Enable and configure depth-based obfuscation capability
-  gl.enable(gl.DEPTH_TEST);
-  gl.depthFunc(gl.LEQUAL);
+    // Enable and configure depth-based obfuscation capability
+    gl.enable(gl.DEPTH_TEST);
+    gl.depthFunc(gl.LEQUAL);
 
-  // Trigger a clear for colors and depth on our canvas
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    // Trigger a clear for colors and depth on our canvas
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  }());
+
+  var shaderProgram;
+  function compileShader(gl, shader) {
+    gl.compileShader(shader);
+    assert(gl.getShaderParameter(shader, gl.COMPILE_STATUS),
+      'Unable to compile shader: ' + gl.getShaderInfoLog(shader));
+  }
+  (function initShaders() {
+    // Compile our shaders
+    var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fragmentShader, `
+      void main(void) {
+        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+      }
+    `);
+    compileShader(gl, fragmentShader);
+
+    var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vertexShader, `
+      attribute vec3 aVertexPosition;
+      uniform mat4 uMVMatrix;
+      uniform mat4 uPMatrix;
+      void main(void) {
+        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+      }
+    `);
+    compileShader(gl, vertexShader);
+  }());
 }
 
 // Invoke our main function
