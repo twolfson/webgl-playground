@@ -98,7 +98,11 @@ function main() {
     // Estalish our perspective
     // DEV: We have switched from mdn to a mdn/gpjt hybrid here
     var perspectiveMatrix = mat4.create();
-    mat4.perspective(perspectiveMatrix, 45, canvasWidth / canvasHeight, 0.1, 100.0);
+    var vertFieldOfViewDegrees = 45;
+    mat4.perspective(perspectiveMatrix /* output matrix */,
+      (vertFieldOfViewDegrees * 2 * Math.PI) / 180 /* degrees -> radians */,
+      canvasWidth / canvasHeight /* aspect */,
+      0.1 /* near bound */, 100.0 /* far bound */);
 
     // Update our model view matrix
     // TODO: Verify that `mvMatrix` is "model view matrix"
