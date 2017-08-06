@@ -10,6 +10,10 @@ function main() {
   // Resolve our canvas
   var canvasEl = document.getElementById('canvas');
   assert(canvasEl, 'Unable to find element #canvas');
+  var canvasWidth = canvasEl.width; assert(canvasWidth);
+  assert(typeof canvasWidth === 'number');
+  var canvasHeight = canvasEl.height; assert(canvasHeight);
+  assert(typeof canvasHeight === 'number');
 
   // Resolve our WebGL context
   var gl = canvas.getContext('webgl');
@@ -94,7 +98,7 @@ function main() {
     // Estalish our perspective
     // DEV: We have switched from mdn to a mdn/gpjt hybrid here
     var perspectiveMatrix = mat4.create();
-    mat4.perspective(perspectiveMatrix, 45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0);
+    mat4.perspective(perspectiveMatrix, 45, canvasWidth / canvasHeight, 0.1, 100.0);
 
     // Update our model view matrix
     // TODO: Verify that `mvMatrix` is "model view matrix"
