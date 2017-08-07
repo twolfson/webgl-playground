@@ -41,6 +41,14 @@ function main() {
     // GLSL docs: http://nehe.gamedev.net/article/glsl_an_introduction/25007/
     var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(fragmentShader, `
+      // Set our precision
+      precision mediump float;
+
+      // Declare our variables
+      // DEV: This loads \`vertexColor\` from our \`vertexShader\`
+      varying vec4 vertexColor;
+
+      // Define our shader logic
       void main(void) {
         gl_FragColor = vertexColor;
       }
@@ -52,10 +60,16 @@ function main() {
       // Set our precision
       precision mediump float;
 
+      // Declare our variables
+      // DEV: \`attribute\` is a per-vertex variable
+      // DEV: \`uniform\` is a constant for all vertices
+      // DEV: \`varying\` is shared with other shaders
       attribute vec3 aVertexPosition;
       uniform mat4 uniformModelViewMatrix;
       uniform mat4 uniformProjectionMatrix;
       varying vec4 vertexColor;
+
+      // Define our shader logic
       void main(void) {
         // Define our vertex position
         gl_Position = uniformProjectionMatrix * uniformModelViewMatrix * vec4(aVertexPosition, 1.0);
