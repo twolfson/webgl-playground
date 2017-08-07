@@ -1,7 +1,5 @@
 // Depends on `gl-matrix`
 
-// TODO: See TODOs (e.g. learning GL underlying terms)
-
 // Define helper functions
 function assert(val, msg) {
   if (!val) { throw new Error(msg); }
@@ -40,11 +38,8 @@ function main() {
   }
   (function initShaders () {
     // Compile our shaders
+    // GLSL docs: http://nehe.gamedev.net/article/glsl_an_introduction/25007/
     var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-    // TODO: Document GLSL language
-    // TODO: Get deeper explanation of how WebGL relies on vertex/fragment shaders/programs
-    //   Current thought is it takes JS bound vars and sets up variables to render with in WebGL engine
-    //   Instead of it being done in JS
     gl.shaderSource(fragmentShader, `
       void main(void) {
         gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
@@ -78,8 +73,7 @@ function main() {
     vertexPositionAttributeLocation = gl.getAttribLocation(shaderProgram, 'aVertexPosition');
     assert(vertexPositionAttributeLocation !== -1);
 
-    // Flag our index/id/location of `aVertexPosition` as a vertex attribute array
-    // TODO: Look up "vertex attrib array" in GL terminology
+    // Flag our index/id/location of `aVertexPosition` as an array to write to/read from
     gl.enableVertexAttribArray(vertexPositionAttributeLocation);
   }());
 
@@ -136,7 +130,7 @@ function main() {
       0 /* offset (start at first item) */);
 
     // Resolve and update our id/index/location for our matrix variables
-    // TODO: Look up "uniform location" in GL terminology
+    // DEV: Uniform means variable is consistent for all vertices (acts as a constant/global)
     var uniformProjectionLocation = gl.getUniformLocation(shaderProgram, 'uniformProjectionMatrix');
     assert(uniformProjectionLocation);
     gl.uniformMatrix4fv(uniformProjectionLocation, false /* transpose */, projectionMatrix /* value */);
