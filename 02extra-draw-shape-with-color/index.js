@@ -64,7 +64,7 @@ function main() {
       // DEV: \`attribute\` is a per-vertex variable
       // DEV: \`uniform\` is a constant for all vertices
       // DEV: \`varying\` is shared with other shaders
-      attribute vec3 aVertexPosition;
+      attribute vec3 attrVertexPosition;
       uniform mat4 uniformModelViewMatrix;
       uniform mat4 uniformProjectionMatrix;
       varying vec4 vertexColor;
@@ -72,7 +72,7 @@ function main() {
       // Define our shader logic
       void main(void) {
         // Define our vertex position
-        gl_Position = uniformProjectionMatrix * uniformModelViewMatrix * vec4(aVertexPosition, 1.0);
+        gl_Position = uniformProjectionMatrix * uniformModelViewMatrix * vec4(attrVertexPosition, 1.0);
 
         // Map our vertex position to a color "-1 to +1" -> "0 to 1"
         vertexColor = (gl_Position * 0.5) + 0.5;
@@ -91,11 +91,11 @@ function main() {
     // Complete binding to our shader program
     gl.useProgram(shaderProgram);
 
-    // Retrieve the index/id/location of our `aVertexPosition` variable in our shader
-    vertexPositionAttributeLocation = gl.getAttribLocation(shaderProgram, 'aVertexPosition');
+    // Retrieve the index/id/location of our `attrVertexPosition` variable in our shader
+    vertexPositionAttributeLocation = gl.getAttribLocation(shaderProgram, 'attrVertexPosition');
     assert(vertexPositionAttributeLocation !== -1);
 
-    // Flag our index/id/location of `aVertexPosition` as an array to write to/read from
+    // Flag our index/id/location of `attrVertexPosition` as an array to write to/read from
     gl.enableVertexAttribArray(vertexPositionAttributeLocation);
   }());
 

@@ -49,11 +49,11 @@ function main() {
 
     var vertexShader = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(vertexShader, `
-      attribute vec3 aVertexPosition;
+      attribute vec3 attrVertexPosition;
       uniform mat4 uniformModelViewMatrix;
       uniform mat4 uniformProjectionMatrix;
       void main(void) {
-        gl_Position = uniformProjectionMatrix * uniformModelViewMatrix * vec4(aVertexPosition, 1.0);
+        gl_Position = uniformProjectionMatrix * uniformModelViewMatrix * vec4(attrVertexPosition, 1.0);
       }
     `);
     _compileShader(gl, vertexShader);
@@ -69,11 +69,11 @@ function main() {
     // Complete binding to our shader program
     gl.useProgram(shaderProgram);
 
-    // Retrieve the index/id/location of our `aVertexPosition` variable in our shader
-    vertexPositionAttributeLocation = gl.getAttribLocation(shaderProgram, 'aVertexPosition');
+    // Retrieve the index/id/location of our `attrVertexPosition` variable in our shader
+    vertexPositionAttributeLocation = gl.getAttribLocation(shaderProgram, 'attrVertexPosition');
     assert(vertexPositionAttributeLocation !== -1);
 
-    // Flag our index/id/location of `aVertexPosition` as an array to write to/read from
+    // Flag our index/id/location of `attrVertexPosition` as an array to write to/read from
     gl.enableVertexAttribArray(vertexPositionAttributeLocation);
   }());
 
