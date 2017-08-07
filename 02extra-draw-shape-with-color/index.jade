@@ -1,0 +1,11 @@
+doctype
+html
+  head
+    title webgl-playground
+    meta(http-equiv="Content-Type", content="text/html; charset=utf-8")
+    link(rel="stylesheet", href="index.css", type="text/css")
+  body
+    canvas#canvas(width="640", height="480")
+    //- DEV: It's not ideal to use a script from `node_modules` but we don't want to set up a build system yet
+    script(src="../node_modules/gl-matrix/dist/gl-matrix.js")
+    script(src="index.js")
