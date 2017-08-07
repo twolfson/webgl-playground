@@ -1,5 +1,7 @@
 // Depends on `gl-matrix`
 
+// TODO: See TODOs (e.g. learning GL underlying terms)
+
 // Define helper functions
 function assert(val, msg) {
   if (!val) { throw new Error(msg); }
@@ -75,6 +77,7 @@ function main() {
     // Retrieve the index/id/location of our `aVertexPosition` variable in our shader
     vertexPositionAttributeLocation = gl.getAttribLocation(shaderProgram, 'aVertexPosition');
     assert(vertexPositionAttributeLocation !== -1);
+
     // Flag our index/id/location of `aVertexPosition` as a vertex attribute array
     // TODO: Look up "vertex attrib array" in GL terminology
     gl.enableVertexAttribArray(vertexPositionAttributeLocation);
@@ -124,9 +127,13 @@ function main() {
     // Bind square vertices to the ARRAY_BUFFER register
     gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
 
-    // Update the size info for our `aVertexPosition` variable
-    gl.vertexAttribPointer(vertexPositionAttributeLocation, 3 /* vertex size */, gl.FLOAT /* type */,
-      false /* normalized */, 0 /* stride */, 0 /* offset */);
+    // Inform WebGL how to walk over our array of data
+    gl.vertexAttribPointer(vertexPositionAttributeLocation,
+      3 /* size (items to pull into data) */,
+      gl.FLOAT /* type */,
+      false /* normalized */,
+      0 /* stride (access every item) */,
+      0 /* offset (start at first item) */);
 
     // Resolve and update our id/index/location for our matrix variables
     // TODO: Look up "uniform location" in GL terminology
@@ -138,6 +145,7 @@ function main() {
     gl.uniformMatrix4fv(uniformModelViewLocation,  false /* transpose */, modelViewMatrix /* value */);
 
     // Perform our draw with the linked shaders and given variables
+    // TODO: Try out `gl.drawElements`
     gl.drawArrays(gl.TRIANGLE_STRIP /* mode */, 0 /* first (vertex) */, 4 /* count (vertices) */);
   }());
 }

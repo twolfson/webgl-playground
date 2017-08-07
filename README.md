@@ -12,6 +12,8 @@ More resources:
 
 - <https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext>
     - Great for filling in even more details beyond code examples
+- <https://webglfundamentals.org/>
+    - Great explanation of WebGL's inner workings
 
 ## Getting started
 To get our repo running locally, run the following:
