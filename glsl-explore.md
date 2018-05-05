@@ -82,3 +82,39 @@ void main() {
     gl_FragColor = vec4(st.x,st.y,0.0,1.0);
 }
 ```
+
+**A better cross-hair with clipping:**
+
+```glsl
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+
+void main() {
+    float step_x = step(u_mouse.x, gl_FragCoord.x);
+    float step_y = step(u_mouse.y, gl_FragCoord.y);
+    gl_FragColor = vec4(step_x, step_y, 0.0, 1.0);
+}
+```
+
+**An even better cross-hair with hard lines:**
+
+```glsl
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+
+void main() {
+    float step_x = step(abs(u_mouse.x - gl_FragCoord.x), 1.0);
+    float step_y = step(abs(u_mouse.y - gl_FragCoord.y), 1.0);
+    gl_FragColor = vec4(step_x, step_y, 0.0, 1.0);
+}
+```
