@@ -113,6 +113,8 @@ uniform vec2 u_mouse;
 uniform float u_time;
 
 void main() {
+    // Find the distance between the mouse and the fragment position
+    // If it's under 1.0, then render this color. Otherwise, render black
     float step_x = step(abs(u_mouse.x - gl_FragCoord.x), 1.0);
     float step_y = step(abs(u_mouse.y - gl_FragCoord.y), 1.0);
     gl_FragColor = vec4(step_x, step_y, 0.0, 1.0);
@@ -132,4 +134,30 @@ When we swap the "1" with the dynamic smooth step, we get a transition that is p
 
 ```glsl
 smoothstep(0.2,0.5,st.x) - smoothstep(0.5,0.8,st.x)
+```
+
+**Single color cross-hair:**
+
+```glsl
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+
+void main() {
+    // Find the distance between the mouse and the fragment position
+    float x_epsilon = u_mouse.x - gl_FragCoord.x;
+    // Example: distance(30 - 20) -> 10
+    // If the distance is in our threshold, flag it as 1.0
+    // Example: 10.0 > 1.0 -> 1.0 -> 0.0
+    // Example: 0.0 > 1.0 -> 0.0 -> 1.0
+    float show_x = 1.0 - step(1.0, abs(x_epsilon));
+    float y_epsilon = u_mouse.y - gl_FragCoord.y;
+    float show_y = 1.0 - step(1.0, abs(y_epsilon));
+    float red = max(show_x, show_y);
+    gl_FragColor = vec4(red, 0.0, 0.0, 1.0);
+}
 ```
