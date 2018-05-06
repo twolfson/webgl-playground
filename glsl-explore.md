@@ -161,3 +161,182 @@ void main() {
     gl_FragColor = vec4(red, 0.0, 0.0, 1.0);
 }
 ```
+
+**Time-based color blending:**
+
+```glsl
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+#define PI 3.14159265359
+
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+
+vec3 colorA = vec3(0.162,0.162,0.975);
+vec3 colorB = vec3(1.000,0.570,0.244);
+
+void main() {
+    // Resolve the normalized [0,1] position of the pixel
+    vec2 st = gl_FragCoord.xy/u_resolution.xy;
+
+    // Build our [0, 0, 0] default for colors
+    vec3 color = vec3(0.0);
+
+    // Determine how much of each color to use at our point
+    // At time 0: Range is from x = 0.0 to 0.5
+    // At time n: Range is from x = 0.5 to 1.0
+    float pct = st.x/2.0 + abs(sin(u_time*PI/4.0))/2.0;
+
+    // Blend our colors based on percentage
+    // At time 0: 100% A to 50% A/B
+    // At time n: 50% A/B to 100% B
+    color = mix(colorA, colorB, pct);
+
+    // Render our colors
+    gl_FragColor = vec4(color,1.0);
+}
+```
+
+**Hard-striped rainbow:**
+
+```glsl
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+#define PI 3.14159265359
+
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+
+vec3 colorR = vec3(1.0, 0.0, 0.0);
+vec3 colorG = vec3(0.0, 1.0, 0.0);
+vec3 colorB = vec3(0.0, 0.0, 1.0);
+
+void main() {
+    // Resolve the normalized [0,1] position of the pixel
+    vec2 st = gl_FragCoord.xy/u_resolution.xy;
+
+    // Build our [0, 0, 0] default for colors
+    vec3 color = vec3(0.0);
+
+    // Determine how much of each color to use at our point
+    // r = Between 0 and 1/3, 1.0; Otherwise, 0.0
+    float pct_r = step(0.0/3.0, st.x) - step(1.0/3.0, st.x);
+    float pct_g = step(1.0/3.0, st.x) - step(2.0/3.0, st.x);
+    float pct_b = step(2.0/3.0, st.x) - step(3.0/3.0, st.x);
+
+    // Blend our colors based on percentage
+    // rgb = r*100% + g*0% + b*0%
+    color = mix(color, color + colorR, pct_r);
+    color = mix(color, color + colorG, pct_g);
+    color = mix(color, color + colorB, pct_b);
+
+    // Render our colors
+    gl_FragColor = vec4(color,1.0);
+}
+```
+
+**Smoothed rainbow:**
+
+Not feeling great about this, it's more like split bands than a nice blend
+
+I think the issue is I'm trying to do exclusive RGB while rainbows have yellow and such
+
+```glsl
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+#define PI 3.14159265359
+
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+
+vec3 colorR = vec3(1.0, 0.0, 0.0);
+vec3 colorG = vec3(0.0, 1.0, 0.0);
+vec3 colorB = vec3(0.0, 0.0, 1.0);
+
+void main() {
+    // Resolve the normalized [0,1] position of the pixel
+    vec2 st = gl_FragCoord.xy/u_resolution.xy;
+
+    // Build our [0, 0, 0] default for colors
+    vec3 color = vec3(0.0);
+
+    // Determine how much of each color to use at our point
+    // r = Fading out from 1.0 to 0.0 between 0 and 3/6
+    // g = Fading in from 0.0 to 1.0 between 1/6 and 4/6 and out from
+    float pct_r = 1.0 - smoothstep(0.0/3.0, 1.0/4.0, st.x);
+    float pct_g = smoothstep(1.0/4.0, 2.0/4.0, st.x) - smoothstep(2.0/4.0, 3.0/4.0, st.x);
+    float pct_b = smoothstep(3.0/4.0, 4.0/4.0, st.x) - 0.0;
+
+    // Blend our colors based on percentage
+    // rgb = r*100% + g*0% + b*0%
+    color = mix(color, color + colorR, pct_r);
+    color = mix(color, color + colorG, pct_g);
+    color = mix(color, color + colorB, pct_b);
+
+    // Render our colors
+    gl_FragColor = vec4(color,1.0);
+}
+```
+
+Tweaked with scales and it's much better now:
+
+```glsl
+    float pct_r = 1.0 - smoothstep(0.0/3.0, 4.184/4.0, st.x);
+    float pct_g = smoothstep(0.200/4.0, 2.136/4.0, st.x) - smoothstep(1.832/4.0, 4.384/4.0, st.x);
+    float pct_b = smoothstep(1.768/4.0, 4.0/4.0, st.x) - 0.0;
+```
+
+**Attempting to expand HSB angle range:**
+
+I'm getting really frustrated at not being able to introspect values to debug them
+
+Definitely need to find a debugging mechanism soon
+
+This code is broken
+
+```glsl
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+#define TWO_PI 6.28318530718
+
+uniform vec2 u_resolution;
+uniform float u_time;
+
+//  Function from Iñigo Quiles
+//  https://www.shadertoy.com/view/MsS3Wc
+vec3 hsb2rgb( in vec3 c ){
+    vec3 rgb = clamp(abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),
+                             6.0)-3.0)-1.0,
+                     0.0,
+                     1.0 );
+    rgb = rgb*rgb*(3.0-2.0*rgb);
+    return c.z * mix( vec3(1.0), rgb, c.y);
+}
+
+void main(){
+    vec2 st = gl_FragCoord.xy/u_resolution;
+    vec3 color = vec3(0.0);
+
+    // Use polar coordinates instead of cartesian
+    vec2 toCenter = vec2(0.5)-st;
+    float angle = atan(toCenter.y,toCenter.x)/TWO_PI/2.0;
+    float radius = length(toCenter)*2.0;
+
+    // Map the angle (-PI to PI) to the Hue (from 0 to 1)
+    // and the Saturation to the radius
+    color = hsb2rgb(vec3(angle,radius,1.0));
+
+    gl_FragColor = vec4(color,1.0);
+}
+```
