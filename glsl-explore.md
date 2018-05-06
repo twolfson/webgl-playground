@@ -118,3 +118,18 @@ void main() {
     gl_FragColor = vec4(step_x, step_y, 0.0, 1.0);
 }
 ```
+
+**Understanding smoothstep add/subtract:**
+
+We have 2 functions which clip at 0 and 1. One which increases from 0 to 1 and one that drops from 1 to 0:
+
+```glsl
+0 + smoothstep(0.2,0.5,st.x)
+1 - smoothstep(0.5,0.8,st.x)
+```
+
+When we swap the "1" with the dynamic smooth step, we get a transition that is parabola-like
+
+```glsl
+smoothstep(0.2,0.5,st.x) - smoothstep(0.5,0.8,st.x)
+```
