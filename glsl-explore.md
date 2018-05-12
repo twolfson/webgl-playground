@@ -498,3 +498,45 @@ void main(){
 ```
 
 I think the issue is we are doing subtraction on the non-final result so we need to subtract 2 rectangles from another
+
+Tried that out but noope
+
+```glsl
+// Author @patriciogv - 2015
+// http://patriciogonzalezvivo.com
+
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+
+void main(){
+    vec2 st = gl_FragCoord.xy/u_resolution.xy;
+    vec3 color = vec3(0.0);
+    float pct = 1.0;
+
+    // bottom-left
+    vec2 blo = step(vec2(0.260,0.420),st);
+    vec2 bli = step(vec2(0.110,0.200),st);
+
+    // top-right
+    vec2 tro = step(vec2(0.130,0.160),1.0-st);
+    vec2 tri = step(vec2(0.380,0.310),1.0-st);
+
+    // Calculate what to draw
+    pct = 1.0 - (bli.x * bli.y * tri.x * tri.y) - (blo.x * blo.y * tro.x * tro.y);
+
+    color = vec3(pct);
+
+    gl_FragColor = vec4(color,1.0);
+}
+```
+
+However, that's clearly a union of 2 rectangles
+
+And the non-"1.0" is the intersection
+
+So we can our 2 corners and intersect with their square. Then boom, done. Floating rectangle.
