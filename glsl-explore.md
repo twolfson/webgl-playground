@@ -817,7 +817,7 @@ float drawHorizontalLine(in vec2 st, in float y, in float height) {
     return step(y, st.y) - step(y + height, st.y);
 }
 // Draws 1.0/white line between bottom left and top right
-float drawFilledRect(in vec2 st, in vec2 vBottomLeft, in vec2 vTopRight) {
+float drawFilledRect(in vec2 st, in vec2 vBottomLeft, in vec2 vTopRight /* x/y from that corner */) {
     vec2 vBottomLeftSt = step(vBottomLeft, st);
     vec2 vTopRightSt = step(vTopRight, 1.0-st);
     return vBottomLeftSt.x * vBottomLeftSt.y * vTopRightSt.x * vTopRightSt.y;
@@ -827,21 +827,20 @@ float drawFilledRect(in vec2 st, in vec2 vBottomLeft, in vec2 vTopRight) {
 void main() {
     // Define our common variables
     vec2 st = gl_FragCoord.xy/u_resolution.xy;
-    vec3 color = vec3(1.0);
+    vec3 color = vec3(0.0);
     float pct;
 
     // Draw black lines
     pct = drawVerticalLine(st, 0.3, 0.1);
-    // pct += drawVerticalLine(st, 0.8, 0.1);
-    // pct += drawHorizontalLine(st, 0.6, 0.1);
-    // color -= pct/pct;
+    pct += drawVerticalLine(st, 0.8, 0.1);
+    pct += drawHorizontalLine(st, 0.6, 0.1);
+    color += min(pct, 1.0);
 
     // Draw red rectangle
-    pct = drawFilledRect(st, vec2(0.2), vec2(0.3));
-    color -= vec3(0.0, pct, pct);
+    pct = drawFilledRect(st, vec2(0.3), vec2(0.2, 0.3));
+    color += vec3(pct, pct, 0.0);
 
     // Output our result
-    gl_FragColor = vec4(color,1.0);
-    // gl_FragColor = vec4(vec3(pct)/1.0,1.0);
+    gl_FragColor = vec4(1.0-color,1.0);
 }
 ```
