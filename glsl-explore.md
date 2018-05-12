@@ -661,3 +661,36 @@ Ugh, nvm. I'm wrong but close...
     - Example: 1.0 union 0.0 = 1.0
     - Example: 0.0 union 0.0 = 0.0
     - Example: 1.0 union 1.0 = 1.0
+        - Range issues for `+` here; 1.0 + 1.0 = 2.0
+    - Another solution: (A + B)/(A + B) since this normalizes the range
+        - 2.0/2.0 -> 1.0
+        - 0.0/0.0 -> 0.0 in glsl
+
+Oh, there's boolean operators... wtf...
+
+Maybe there's a performance concern but I'd imagine `max` is slower
+
+Sooo demos:
+
+```glsl
+// 2 partially exclusive rectangles
+vec2 blo = step(vec2(0.1),st);
+vec2 bli = step(vec2(0.2),st);
+vec2 tro = step(vec2(0.5),1.0-st);
+vec2 tri = step(vec2(0.4),1.0-st);
+```
+
+- AND
+    ```glsl
+    pct = (blo.x*blo.y*tro.x*tro.y) *
+        (bli.x*bli.y*tri.x*tri.y);
+    ```
+- NOT
+    ```glsl
+    pct = 1.0 - (blo.x*blo.y*tro.x*tro.y);
+    ```
+- OR
+    ```glsl
+    pct = (blo.x*blo.y*tro.x*tro.y) + (bli.x*bli.y*tri.x*tri.y);
+    pct /= pct;
+    ```
