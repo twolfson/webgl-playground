@@ -586,6 +586,12 @@ void main(){
 
 Fixed it up, this makes sense now. It's the damn capped values that are throwing me. Maybe I should work in 1/10 greyscale...
 
+To rephrase it:
+
+- Draw an inner rectangle and an outer rectangle
+- Intersect them via subtraction. This intersection is in white (1.0) and the rest is black
+- Invert it via `1.0 - x` to get the intersection in black
+
 ```glsl
 // Author @patriciogv - 2015
 // http://patriciogonzalezvivo.com
@@ -611,12 +617,29 @@ void main(){
     vec2 tro = step(vec2(0.3),1.0-st);
     vec2 tri = step(vec2(0.4),1.0-st);
     pct =
-        1.0 -
-        (blo.x*blo.y*tro.x*tro.y) +
-        (bli.x*bli.y*tri.x*tri.y);
+        1.0 - (
+            (blo.x*blo.y*tro.x*tro.y) -
+            (bli.x*bli.y*tri.x*tri.y)
+        );
 
     color = vec3(pct);
 
     gl_FragColor = vec4(color,1.0);
 }
 ```
+
+- Intersection: A - B
+    - Stays in range: [0, 1] - [0, 1] -> [0, 1]
+- Union: A * B
+    - Stays in range: [0, 1] * [0, 1] -> [0, 1]
+- Not/Invert: 1.0 - A
+    - Stays in range: [0, 1] * [0, 1] -> [0, 1]
+
+^ These are the fundamental operations of Boolean algebra. We can find the rest of the Boolean operations from this:
+
+- A not B: A intersecting not B
+- B not A: B intersecting not A
+- A XOR B
+    - Strategy 1: (A union B) not (A intersect B)
+
+Let's demo this in shaders...
