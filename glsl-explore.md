@@ -643,3 +643,21 @@ void main(){
     - Strategy 1: (A union B) not (A intersect B)
 
 Let's demo this in shaders...
+
+Ugh, nvm. I'm wrong but close...
+
+- AND/Intersection: A * B
+    - Example: 1.0 intersecting 0.0 = 0.0
+    - Example: 0.0 intersecting 0.0 = 0.0
+    - Example: 1.0 intersecting 1.0 = 1.0
+- NOT/Invert: 1.0 - A
+    - Example: Invert 1.0 = 0.0
+    - Example: Invert 0.0 = 1.0
+- A not B: ~~A - B~~ (use boolean logic instead, maybe `step`)
+    - Example: 1.0 not 0.0 =  0.0
+    - Example: 1.0 not 1.0 =  0.0
+    - Example: 0.0 not 1.0 = -1.0 // Ugh, out of range...
+- OR/Union: ~~A + B~~ `max(A, B)`
+    - Example: 1.0 union 0.0 = 1.0
+    - Example: 0.0 union 0.0 = 0.0
+    - Example: 1.0 union 1.0 = 1.0
