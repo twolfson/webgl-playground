@@ -754,3 +754,42 @@ void main(){
     gl_FragColor = vec4(color,1.0);
 }
 ```
+
+**Functional floating rectangle:**
+
+```glsl
+// Author @patriciogv - 2015
+// http://patriciogonzalezvivo.com
+
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+
+float drawRect(in vec2 st, in float borderWidth, in vec2 blVec2, in vec2 trVec2) {
+    // bottom-left
+    vec2 blo = step(blVec2,st);
+    vec2 bli = step(blVec2 + borderWidth,st);
+
+    // top-right
+    vec2 tro = step(trVec2,1.0-st);
+    vec2 tri = step(trVec2 + borderWidth,1.0-st);
+    float pct = 1.0 - (
+        (blo.x*blo.y*tro.x*tro.y)
+    ) * (
+        1.0 - (bli.x*bli.y*tri.x*tri.y)
+    );
+    return pct;
+}
+
+void main(){
+    vec2 st = gl_FragCoord.xy/u_resolution.xy;
+    float pct = drawRect(st, 0.1, vec2(0.1), vec2(0.3));
+    vec3 color = vec3(pct);
+
+    gl_FragColor = vec4(color,1.0);
+}
+```
