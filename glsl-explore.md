@@ -797,3 +797,39 @@ void main(){
 ... I'm really getting tired of spending time on code only to accidentally hit "Back"
 
 We wrote `drawHorizontalLine`, `drawVerticalLine`, and `drawFilledRect` functions and were making progress with multi-staged coloring for the Mondrian painting
+
+```glsl
+// Perform common setup
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+
+// Draws 1.0/white line at x
+float drawVerticalLine(in vec2 st, in float x, in float width) {
+    return step(x, st.x) - step(x + width, st.x);
+}
+float drawHorizontalLine(in vec2 st, in float y, in float height) {
+    return step(y, st.y) - step(y + height, st.y);
+}
+
+// Define our main function
+void main() {
+    // Define our common variables
+    vec2 st = gl_FragCoord.xy/u_resolution.xy;
+    vec3 color = vec3(0.0);
+    float pct;
+
+    // Draw black lines
+    pct = drawVerticalLine(st, 0.3, 0.1);
+    pct += drawVerticalLine(st, 0.8, 0.1);
+    pct += drawHorizontalLine(st, 0.6, 0.1);
+    color += pct/pct;
+
+    // Output our result
+    gl_FragColor = vec4(color/2.0,1.0);
+}
+```
