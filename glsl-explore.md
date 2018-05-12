@@ -793,3 +793,7 @@ void main(){
     gl_FragColor = vec4(color,1.0);
 }
 ```
+
+... I'm really getting tired of spending time on code only to accidentally hit "Back"
+
+We wrote `drawHorizontalLine`, `drawVerticalLine`, and `drawFilledRect` functions and were making progress with multi-staged coloring for the Mondrian painting
