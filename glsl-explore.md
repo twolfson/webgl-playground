@@ -694,3 +694,23 @@ vec2 tri = step(vec2(0.4),1.0-st);
     pct = (blo.x*blo.y*tro.x*tro.y) + (bli.x*bli.y*tri.x*tri.y);
     pct /= pct;
     ```
+
+Now for the complex versions:
+
+- A - B: A AND NOT B
+    ```glsl
+    pct = (
+        (blo.x*blo.y*tro.x*tro.y)
+    ) * (
+        1.0 - (bli.x*bli.y*tri.x*tri.y)
+    );
+    ```
+- A XOR B: Strategy 1: (A union B) not (A intersect B); (A OR B) - (A AND B)
+    ```glsl
+    pct = (blo.x*blo.y*tro.x*tro.y) + (bli.x*bli.y*tri.x*tri.y);
+    pct /= pct;
+    pct -= (blo.x*blo.y*tro.x*tro.y) *
+        (bli.x*bli.y*tri.x*tri.y);
+    ```
+
+Yep, everything looks fantastic. It's a little hard to visualize in my head still (especially the 1-D equivalents of these going up to their 2-D counterparts) but I think it all comes with practice
