@@ -583,3 +583,40 @@ void main(){
     gl_FragColor = vec4(color,1.0);
 }
 ```
+
+Fixed it up, this makes sense now. It's the damn capped values that are throwing me. Maybe I should work in 1/10 greyscale...
+
+```glsl
+// Author @patriciogv - 2015
+// http://patriciogonzalezvivo.com
+
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+
+void main(){
+    vec2 st = gl_FragCoord.xy/u_resolution.xy;
+    vec3 color = vec3(0.0);
+    float pct = 1.0;
+
+    // bottom-left
+    vec2 blo = step(vec2(0.1),st);
+    vec2 bli = step(vec2(0.2),st);
+
+    // top-right
+    vec2 tro = step(vec2(0.3),1.0-st);
+    vec2 tri = step(vec2(0.4),1.0-st);
+    pct =
+        1.0 -
+        (blo.x*blo.y*tro.x*tro.y) +
+        (bli.x*bli.y*tri.x*tri.y);
+
+    color = vec3(pct);
+
+    gl_FragColor = vec4(color,1.0);
+}
+```
