@@ -922,3 +922,5 @@ void main(){
     gl_FragColor = vec4( color, 1.0 );
 }
 ```
+
+Got through distance fields. Stopping at polar shapes
