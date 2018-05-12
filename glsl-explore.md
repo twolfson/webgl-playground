@@ -393,3 +393,38 @@ void main(){
     gl_FragColor = vec4(color,1.0);
 }
 ```
+
+**Resizing a rectangle:**
+
+```glsl
+// Author @patriciogv - 2015
+// http://patriciogonzalezvivo.com
+
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+
+void main(){
+    vec2 st = gl_FragCoord.xy/u_resolution.xy;
+    vec3 color = vec3(0.0);
+
+    // bottom-left
+    // Resize via vector for bottom/left bound
+    vec2 bl = step(vec2(0.180,0.150),st);
+    float pct = bl.x * bl.y;
+
+    // top-right
+    // Resize via vector for top/right bound
+    vec2 tr = step(vec2(0.180,0.370),1.0-st);
+    pct *= tr.x * tr.y;
+
+    color = vec3(pct);
+
+    gl_FragColor = vec4(color,1.0);
+}
+
+```
