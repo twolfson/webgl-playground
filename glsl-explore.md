@@ -448,19 +448,16 @@ void main(){
 
     // bottom-left
     // Resize via vector for bottom/left bound
-    vec2 bl = floor(st*8.0);
-    gl_FragColor = vec4(bl, 1.0, 1.0);
-    return;
+    vec2 bl = floor(st*10.0);
     float pct = bl.x * bl.y;
 
     // top-right
     // Resize via vector for top/right bound
-    vec2 tr = step(vec2(0.1),1.0-st);
+    vec2 tr = floor((1.0-st)*10.0);
     pct *= tr.x * tr.y;
 
     color = vec3(pct);
 
     gl_FragColor = vec4(color,1.0);
 }
-
 ```
