@@ -10,6 +10,6 @@
   "license": "Unlicense",
   "dependencies": {
     "gl-matrix": "~2.4.0",
-    "serve": "~1.4.0"
+    "serve": "~9.3.0"
   }
 }

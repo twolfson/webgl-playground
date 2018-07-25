@@ -28,10 +28,10 @@ npm install
 
 # Start our server
 npm start
-# serving /home/todd/github/webgl-playground on port 3000
+# serving /home/todd/github/webgl-playground on port 5000
 ```
 
-Our application will be accessible at <http://localhost:3000/>
+Our application will be accessible at <http://localhost:5000/>
 
 ## Documentation
 Projects are arranged by folders:
